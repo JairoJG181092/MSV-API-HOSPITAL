@@ -1,0 +1,20 @@
+package com.example.medicos.specifications;
+
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MedicoSpecification {
+	private Specification<Medico> nomnreContiene(String nombre){
+		return (root, query, cb)->{
+			if(nombre.isBlank()) {
+			return cb.conjunction();
+		}
+		String pattern = "%" + nombre.trim().toLowerCase() + "%";
+		return cb.or(
+				cb.like(cb.lower(cb.lower(root.get("nombre"))),pattern),
+				cb.like(cb.lower(cb.lower(root.get("apellidoPaterno"))),pattern),
+				cb.like(cb.lower(cb.lower(root.get("apellidoMaterno"))),pattern));
+	};
+	}
+}

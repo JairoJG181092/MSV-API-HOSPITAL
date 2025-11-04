@@ -1,0 +1,7 @@
+package com.jairo.pokemon.exception;
+
+public class EntidadRelacionadaException extends RuntimeException {
+    public EntidadRelacionadaException(String message) {
+        super(message);
+    }
+}

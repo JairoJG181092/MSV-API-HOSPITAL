@@ -1,0 +1,134 @@
+package com.example.medicos.services;
+
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.commons.dto.MedicoRequest;
+import com.example.commons.dto.MedicoResponse;
+import com.example.commons.enums.DisponibilidadMedico;
+import com.example.commons.enums.EspecialidadMedico;
+import com.example.commons.enums.EstadoRegistro;
+import com.example.medicos.MsvMedicosApplication;
+import com.example.medicos.entities.Medico;
+import com.example.medicos.mappers.MedicoMapper;
+import com.example.medicos.repositories.MedicoRespository;
+import com.example.medicos.specifications.MedicoSpecification;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
+@Service
+@Transactional
+@AllArgsConstructor
+@Slf4j
+public class MedicoServiceImpl implements MedicoService{
+
+    private final MsvMedicosApplication msvMedicosApplication;
+	
+	private final MedicoRespository medicoRepository;
+	private final MedicoMapper medicoMapper;
+	private final MedicoSpecification medicoSpecification;
+
+    MedicoServiceImpl(MsvMedicosApplication msvMedicosApplication) {
+        this.msvMedicosApplication = msvMedicosApplication;
+		this.medicoRepository = null;
+		this.medicoMapper = new MedicoMapper();
+		this.medicoSpecification = new MedicoSpecification();
+    }
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<MedicoResponse> listar() {
+		log.info("Listado de todos los medicos solicitado");
+		return medicoRepository.findByEstado(EstadoRegistro.ACTIVO).stream()
+				.map(medicoMapper::entityToResponse).toList();
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public List<MedicoResponse> buscarPor(String nombre, String especialidad, String disponibilidad) {
+		log.info("nciando busqueda de medicos con filtros: nombre={}, especialidad={}, disponibilidad={}", nombre, especialidad, disponibilidad);
+		return medicoRepository.findAll(
+				medicoSpecification.conFiltros(nombre, especialidad, disponibilidad)).stream()
+				.map(medicoMapper::entityToResponse).toList();
+	}
+	@Override
+	public MedicoResponse obtenerPorId(Long id) {
+		return medicoMapper.entityToResponse(getMedicoOrThrow(id));
+	}
+	@Override
+	public MedicoResponse registrar(MedicoRequest request) {
+		log.info("registrando un nuevo medico: {}", request);
+		existByEmail(request.email());
+		existByTelefono(request.telefono());
+		existByCedulaProfesional(request.cedulaProfesional());
+		EspecialidadMedico especialidadMedico =
+				EspecialidadMedico.fromCodigo(request.idEspecialidad());
+		Medico medico = medicoMapper.requestToEntity(request, especialidadMedico, DisponibilidadMedico.DISPONIBLE);
+		medico.setEstado(EstadoRegistro.ACTIVO);
+		medico = medicoRepository.save(medico);
+		log.info("medico registrado con exito");
+		return medicoMapper.entityToResponse(medico);
+	}
+	@Override
+	public MedicoResponse actualizar(MedicoRequest request, Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public MedicoResponse actualizarDisponibilidad(Long idMedico, Long idDisponibilidad) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public void eliminar(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	
+	@Transactional(readOnly = true)
+	private Medico getMedicoOrThrow(Long id) {
+		log.info("Buscando Medico con id: ", id);
+		return medicoRepository.findByIdAndEstado(id, EstadoRegistro.ACTIVO).orElseThrow(() ->
+		new NoSuchElementException("medico no encontrado con el id: " + id));
+	}
+	
+	@Transactional(readOnly = true)
+	private boolean existByEmail(String email) {
+		if(medicoRepository.existsByEmailIgnoreCaseAndEstado(email, EstadoRegistro.ACTIVO)) {
+			log.warn("ya existe un medico registrado con el email: {}", email);
+			throw new IllegalArgumentException("ya existe ia medico registrado con el email: "+ email);
+		}
+		
+		return false;
+	}
+	
+	@Transactional(readOnly = true)
+	private boolean existByTelefono(String telefono) {
+		if(medicoRepository.existsByTelefonoAndEstado(telefono, EstadoRegistro.ACTIVO)) {
+			log.warn("ya existe un medico registrado con el telefono: {}", telefono);
+			throw new IllegalArgumentException("ya existe ia medico registrado con el telefono: "+ telefono);
+		}
+		
+		return false;
+	}
+	
+	@Transactional(readOnly = true)
+	private boolean existByCedulaProfesional(String cedula) {
+		if(medicoRepository.existsByCedulaProfesionalIgnoreCaseAndEstado(cedula, EstadoRegistro.ACTIVO)) {
+			log.warn("ya existe un medico registrado con el cedula: {}", cedula);
+			throw new IllegalArgumentException("ya existe ia medico registrado con el cedula: "+ cedula);
+		}
+		
+		return false;
+	}
+
+}

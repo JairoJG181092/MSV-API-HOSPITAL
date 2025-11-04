@@ -1,0 +1,8 @@
+package com.example.medicos.services;
+
+import com.example.commons.dto.MedicoResponse;
+import com.example.commons.services.CommonService;
+
+public interface MedicoService extends CommonService<MedicoResponse, MedicoResponse>{
+
+}

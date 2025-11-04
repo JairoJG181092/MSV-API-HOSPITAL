@@ -1,0 +1,5 @@
+package com.example.medicos.services;
+
+public class MedicoServiceImpl {
+
+}

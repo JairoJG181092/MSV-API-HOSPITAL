@@ -1,0 +1,7 @@
+package com.jairo.pokemon.dto;
+
+public record ErrorResponse(
+        int codigo,
+        String mensaje
+) {
+}

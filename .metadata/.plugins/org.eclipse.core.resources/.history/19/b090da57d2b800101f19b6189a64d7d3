@@ -1,0 +1,11 @@
+package com.example.commons.services;
+
+import java.util.List;
+
+public interface CommonService<RQ, RS> {
+	List<RS> listar();
+	RS obtenerPorId(Long id);
+	RS registrar();
+	RS actualizar();
+	void eliminar(Long id);
+}

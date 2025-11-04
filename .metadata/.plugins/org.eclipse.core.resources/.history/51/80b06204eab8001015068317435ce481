@@ -1,0 +1,57 @@
+package com.example.medicos.specifications;
+
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
+
+import com.example.commons.enums.EstadoRegistro;
+import com.example.medicos.entities.Medico;
+
+@Component
+public class MedicoSpecification {
+	
+	public Specification<Medico> conFiltros(String nombre, String especialidad, String disponibilidad) {
+		return nombreContiene(nombre).and(especialidadContiene(especialidad))
+				.and(disponibilidadContiene(disponibilidad))
+				.and(estaActivo());
+		
+	}
+	
+	private String toLikePattern(String valor) {
+		return "%" + valor.trim().toLowerCase() + "%";
+	}
+	
+	
+	private Specification<Medico> nombreContiene(String nombre){
+		return (root, query, cb)->{
+			if(nombre.isBlank()) return cb.conjunction();
+		String pattern = toLikePattern(nombre);
+		return cb.or(
+				cb.like(cb.lower(root.get("nombre")),pattern),
+				cb.like(cb.lower(root.get("apellidoPaterno")),pattern),
+				cb.like(cb.lower(root.get("apellidoMaterno")),pattern));
+	};
+	}
+	
+	private Specification<Medico> especialidadContiene(String especialidad)
+	{
+		return (root, query, cb)->{
+			if(especialidad.isBlank()) return cb.conjunction();
+		String pattern = toLikePattern(especialidad);
+		return 	cb.like(cb.lower(root.get("especialidad").as(String.class)),pattern);
+	};
+	}
+	
+	private Specification<Medico> disponibilidadContiene(String disponibilidad)
+	{
+		return (root, query, cb)->{
+			if(disponibilidad.isBlank()) return cb.conjunction();
+		String pattern = toLikePattern(disponibilidad);
+		return 	cb.like(cb.lower(root.get("disponibilidad").as(String.class)),pattern);
+	};
+	}
+	
+	private Specification<Medico> estaActivo(){
+		return (root, query, cb) -> cb.equal(root.get("estado"), EstadoRegistro.ACTIVO);
+	}
+	}
+}

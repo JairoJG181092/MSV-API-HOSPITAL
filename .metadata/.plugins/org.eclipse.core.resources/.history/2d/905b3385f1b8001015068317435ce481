@@ -1,0 +1,73 @@
+package com.example.medicos.services;
+
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.commons.dto.MedicoResponse;
+import com.example.commons.enums.EstadoRegistro;
+import com.example.medicos.mappers.MedicoMapper;
+import com.example.medicos.repositories.MedicoRespository;
+import com.example.medicos.specifications.MedicoSpecification;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
+
+@Service
+@Transactional
+@AllArgsConstructor
+@Slf4j
+public class MedicoServiceImpl implements MedicoService{
+	
+	private final MedicoRespository medicoRepository;
+	private final MedicoMapper medicoMapper;
+	private final MedicoSpecification medicoSpecification;
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<MedicoResponse> listar() {
+		log.info("Listado de todos los medicos solicitado");
+		return medicoRepository.findByEstado(EstadoRegistro.ACTIVO).stream()
+				.map(medicoMapper::entityToResponse).toList();
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public List<MedicoResponse> buscarPor(String nombre, String especialidad, String disponibilidad) {
+		log.info("nciando busqueda de medicos con filtros: nombre={}, especialidad={}, disponibilidad={}", nombre, especialidad, disponibilidad);
+		return medicoRepository.findAll(
+				medicoSpecification.conFiltros(nombre, especialidad, disponibilidad)).stream()
+				.map(medicoMapper::entityToResponse).toList();
+	}
+	@Override
+	public MedicoResponse obtenerPorId(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MedicoResponse registrar(MedicoResponse request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public MedicoResponse actualizar(MedicoResponse request, Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public void eliminar(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public MedicoResponse actualizarDisponibilidad(Long idMedico, Long idDisponibilidad) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	
+
+}
