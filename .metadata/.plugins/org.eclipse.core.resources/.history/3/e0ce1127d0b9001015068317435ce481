@@ -1,0 +1,15 @@
+package com.example.commons.services;
+
+import java.util.List;
+
+import com.example.commons.dto.MedicoResponse;
+import com.example.commons.dto.PacienteRequest;
+
+public interface CommonService<RQ, RS> {
+	List<RS> listar();
+	RS obtenerPorId(Long id);
+	RS registrar(RQ request);
+	RS actualizar(RQ request, Long id);
+	void eliminar(Long id);
+	String generarExpediente(PacienteRequest paciente, MedicoResponse medico);
+}

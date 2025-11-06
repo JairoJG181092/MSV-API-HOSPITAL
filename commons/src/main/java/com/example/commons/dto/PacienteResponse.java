@@ -1,13 +1,22 @@
 package com.example.commons.dto;
 
-public record PacienteResponse(
-		Long id,
-		String nombre,
-		Short edad,
-		Double peso,
-		Double imc,
-		String email,
-		String telefono,
-		String direccion,
-		String numExpediente
-) {}
+import com.example.commons.enums.EstadoRegistro;
+import lombok.*;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class PacienteResponse {
+    private Long id;
+    private String nombreCompleto;
+    private Short edad;
+    private Double peso;
+    private Double estatura;
+    private Double imc;
+    private String email;
+    private String telefono;
+    private String direccion;
+    private String numeroExpediente;
+    private EstadoRegistro estadoPaciente;
+}

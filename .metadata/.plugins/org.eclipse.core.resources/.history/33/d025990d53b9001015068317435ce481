@@ -1,0 +1,60 @@
+package com.example.pacientes.controller;
+
+//import com.example.pacientes.dto.PacienteRequestDTO;
+//import com.example.pacientes.dto.PacienteResponseDTO;
+import com.example.pacientes.services.PacientesService;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.commons.dto.PacienteRequest;
+import com.example.commons.dto.PacienteResponse;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/pacientes")
+public class PacienteController {
+
+    @Autowired
+    private PacientesService pacienteService;
+
+    // C - Crear
+    @PostMapping
+    public ResponseEntity<PacienteResponse> crearPaciente(@Valid @RequestBody PacienteRequest requestDTO) {
+        PacienteResponse nuevoPaciente = pacienteService.registrar(requestDTO);
+        return new ResponseEntity<>(nuevoPaciente, HttpStatus.CREATED);
+    }
+
+    // R - Leer (Todos)
+    @GetMapping
+    public ResponseEntity<List<PacienteResponse>> obtenerTodos() {
+        List<PacienteResponse> pacientes = pacienteService.listar();
+        return ResponseEntity.ok(pacientes);
+    }
+    
+    // R - Leer (Por ID)
+    @GetMapping("/{id}")
+    public ResponseEntity<PacienteResponse> obtenerPorId(@PathVariable Long id) {
+        PacienteResponse paciente = pacienteService.obtenerPorId(id);
+        return ResponseEntity.ok(paciente);
+    }
+
+    // U - Actualizar
+    @PutMapping("/{id}")
+    public ResponseEntity<PacienteResponse> actualizarPaciente(
+            @PathVariable Long id, 
+            @Valid @RequestBody PacienteRequest requestDTO) {
+        PacienteResponse pacienteActualizado = pacienteService.actualizar(requestDTO, id);
+        return ResponseEntity.ok(pacienteActualizado);
+    }
+
+    // D - Eliminar (Lógico)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarPaciente(@PathVariable Long id) {
+        pacienteService.eliminar(id);
+        return ResponseEntity.noContent().build(); // Código 204 No Content
+    }
+}

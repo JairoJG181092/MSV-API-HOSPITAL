@@ -1,0 +1,98 @@
+package com.example.pacientes.services;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import com.example.commons.dto.PacienteRequest;
+import com.example.commons.dto.PacienteResponse;
+import com.example.commons.enums.EstadoRegistro;
+import com.example.pacientes.entities.Pacientes;
+import com.example.pacientes.mapper.PacienteMapper;
+import com.example.pacientes.repositories.PacientesRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+
+public class PacientesServiceImpl implements PacientesService{
+
+
+    @Autowired
+    private PacientesRepository pacienteRepository;
+
+    @Autowired
+    private PacienteMapper pacienteMapper;
+
+    
+    private void validarUnicidad(Pacientes paciente) {
+        
+    }
+
+    // Cálculo del Índice de Masa Corporal (IMC): peso / (estatura * estatura)
+    private Double calcularImc(Double peso, Double estatura) {
+        if (estatura == null || estatura == 0.0 || peso == null) {
+            return 0.0;
+        }
+        // Redondeo a dos decimales
+        return Math.round((peso / (estatura * estatura)) * 100.0) / 100.0;
+    }
+
+    @Override
+    public PacienteResponse registrar(PacienteRequest requestDTO) {
+        // 1. Mapear DTO a Entidad
+        Pacientes paciente = pacienteMapper.requestToEntity(requestDTO);
+        
+        // 2. Validaciones adicionales (si aplica)
+        validarUnicidad(paciente);
+        
+        // 3. Lógica de negocio: Calcular IMC
+        Double imc = calcularImc(requestDTO.peso(), requestDTO.estatura());
+        paciente.setImc(imc);
+        
+        // 4. Guardar
+        Pacientes savedPaciente = pacienteRepository.save(paciente);
+        
+        // 5. Mapear Entidad a ResponseDTO
+        return pacienteMapper.entityToResponse(savedPaciente);
+    }
+
+    @Override
+    public PacienteResponse obtenerPorId(Long id) {
+        Pacientes paciente = pacienteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + id));
+        return pacienteMapper.entityToResponse(paciente);
+    }
+
+    @Override
+    public List<PacienteResponse> listar() {
+        return pacienteRepository.findAll().stream()
+                .map(pacienteMapper::entityToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public PacienteResponse actualizar(PacienteRequest requestDTO, Long id) {
+        Pacientes pacienteExistente = pacienteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + id));
+
+        Pacientes pacienteActualizado = pacienteMapper.requestToEntity(requestDTO);
+        pacienteActualizado.setId(id); 
+
+        
+        Double imc = calcularImc(requestDTO.peso(), requestDTO.estatura());
+        pacienteActualizado.setImc(imc);
+
+        // 3. Guardar
+        Pacientes savedPaciente = pacienteRepository.save(pacienteActualizado);
+
+        // 4. Mapear Entidad a ResponseDTO
+        return pacienteMapper.entityToResponse(savedPaciente);
+    }
+
+    @Override
+    public void eliminar(Long id) {
+        Pacientes paciente = pacienteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + id));
+
+        paciente.setEstadoPaciente(EstadoRegistro.ELIMINADO);
+        pacienteRepository.save(paciente);
+    }
+}

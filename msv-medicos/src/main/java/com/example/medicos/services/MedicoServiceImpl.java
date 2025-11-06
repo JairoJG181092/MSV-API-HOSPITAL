@@ -27,8 +27,6 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 public class MedicoServiceImpl implements MedicoService{
-
-    private final MsvMedicosApplication msvMedicosApplication;
 	
 	private final MedicoRespository medicoRepository;
 	private final MedicoMapper medicoMapper;

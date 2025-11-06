@@ -1,0 +1,5 @@
+package com.example.commons.clients;
+
+public interface PacienteClient {
+
+}

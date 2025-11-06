@@ -1,0 +1,67 @@
+package com.example.citas.services;
+
+import java.util.List;
+import java.util.NoSuchElementException;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.citas.dto.CitaRequest;
+import com.example.citas.dto.CitaResponse;
+import com.example.citas.entities.Citas;
+import com.example.citas.mappers.CitaMapper;
+import com.example.citas.repositories.CitaRepository;
+import com.example.commons.enums.EstadoRegistro;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Service
+@AllArgsConstructor
+@Transactional
+@Slf4j
+public class CitaServiceImpl implements CitaService{
+	private final CitaRepository citaRepository;
+	private final CitaMapper citaMapper;
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<CitaResponse> listar() {
+		log.info("listado de todas las citas solicitadas");
+		return citaRepository.findByEstadoRegistro(EstadoRegistro.ACTIVO).stream()
+				.map(citaMapper::entityToResponse).toList();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public CitaResponse obtenerPorId(Long id) {
+		return citaMapper.entityToResponse(getCitaOrThrow(id));
+	}
+
+	@Override
+	public CitaResponse registrar(CitaRequest request) {
+		
+		return null;
+	}
+
+	@Override
+	public CitaResponse actualizar(CitaRequest request, Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void eliminar(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Transactional(readOnly = true)
+	private Citas getCitaOrThrow(Long id) {
+		log.info("Buscando Cita con id: {}", id);
+		return citaRepository.findByIdAndEstadoRegistro(id, EstadoRegistro.ACTIVO).orElseThrow(()->
+		new NoSuchElementException("Cita no encontrado con el id " + id));
+		
+	}
+
+}

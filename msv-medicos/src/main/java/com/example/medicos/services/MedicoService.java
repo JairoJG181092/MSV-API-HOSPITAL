@@ -6,6 +6,7 @@ import com.example.commons.dto.MedicoRequest;
 import com.example.commons.dto.MedicoResponse;
 import com.example.commons.services.CommonService;
 
+
 public interface MedicoService extends CommonService<MedicoRequest, MedicoResponse>{
 	List<MedicoResponse> buscarPor(String nombre, String especialidad, String disponibilidad);
 	MedicoResponse actualizarDisponibilidad(Long idMedico, Long idDisponibilidad);

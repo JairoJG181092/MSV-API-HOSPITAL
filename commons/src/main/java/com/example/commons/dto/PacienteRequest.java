@@ -1,5 +1,7 @@
 package com.example.commons.dto;
 
+import com.example.commons.enums.EstadoRegistro;
+
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
@@ -37,7 +39,7 @@ public record PacienteRequest(
 		@DecimalMin(value = "1.0", message = "La estatura debe ser mayor que 1 metro")
 	    @DecimalMax(value = "2.0", message = "La estatura máxima permitida es de 2 metros")
 	    Double estatura,
-		
+	    
 		@NotBlank(message = "El email es requerido")
 		@Size(min = 1, max = 100, message = "El email debe tener entre 1 y 100 caracteres")
 		@Email(message = "El email debe tener el formato correcto (correo@dominio)")
@@ -50,5 +52,11 @@ public record PacienteRequest(
 		
 		@NotBlank(message = "La dirección es requerida")
 		@Size(min = 1, max = 150, message = "La dirección debe tener entre 1 y 150 caracteres")
-		String direccion
+		String direccion,
+		
+		@NotBlank(message = "La dirección es requerida")
+		@Size(min = 1, max = 150, message = "La dirección debe tener entre 1 y 150 caracteres")
+		String numeroExpediente,
+		
+		EstadoRegistro estadoPaciente
 ) {}

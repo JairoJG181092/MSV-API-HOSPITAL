@@ -1,0 +1,57 @@
+package com.example.citas.entities;
+
+import java.time.LocalDate;
+
+import com.example.commons.enums.EstadoRegistro;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Entity
+@Table(name = "CITAS")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class Citas {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID_CITA")
+	private Long id;
+	
+	@NotNull(message = "el id de paciente es requerido")
+	@Positive(message = "el id medico debe de ser positivo")
+	@Column(name="ID_PACIENTE", nullable = false)
+	private Long idPaciente;
+	
+	@NotNull(message ="e; id del medio debe de ser requerido")
+	@Positive(message ="e; id del medio debe de ser requerido")
+	@Column(name = "ID_MEDICO", nullable = false)
+	private Long idMedico;
+	
+	@NotNull(message ="LA FECHA debe de ser requerido")
+	@Future(message ="FECHA debe de ser requerido")
+	@Column(name = "FECHA_CITA", nullable = false)
+	private LocalDate fechaCita;
+	
+	private String sintomas;
+	
+	private EstadoCita estadoCia;
+	
+	private EstadoRegistro estadoRegistro;
+
+}

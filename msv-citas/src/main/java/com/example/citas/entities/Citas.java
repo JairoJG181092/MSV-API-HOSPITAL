@@ -1,0 +1,72 @@
+package com.example.citas.entities;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.example.citas.enums.EstadoCita;
+import com.example.commons.enums.EstadoRegistro;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.Future;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+
+@Entity
+@Table(name = "CITAS")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class Citas {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID_CITA")
+	private Long id;
+	
+	@NotNull(message = "el id de paciente es requerido")
+	@Positive(message = "el id medico debe de ser positivo")
+	@Column(name="ID_PACIENTE", nullable = false)
+	private Long idPaciente;
+	
+	@NotNull(message ="e; id del medio debe de ser requerido")
+	@Positive(message ="e; id del medio debe de ser requerido")
+	@Column(name = "ID_MEDICO", nullable = false)
+	private Long idMedico;
+	
+	@NotNull(message ="LA FECHA debe de ser requerido")
+	@Future(message ="FECHA debe de ser requerido")
+	@Column(name = "FECHA_CITA", nullable = false)
+	private LocalDateTime fechaCita;
+	
+	@NotBlank(message = "los sintomas son requeridos")
+	@Size(min = 20, max = 500, message = " la descripcion de los sintomas debe de ser entre 20 y 500")
+	@Column(name = "SITOMAS", nullable = false, length = 500)
+	private String sintomas;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ESTADO_CITA", length = 30, nullable = false)
+	@NotNull(message = "el estado de la cita es requerido")
+	private EstadoCita estadoCita;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "ESTADO_REGISTRO", length = 30, nullable = false)
+	@NotNull(message = "el estado es requerido")
+	private EstadoRegistro estadoRegistro;
+
+}

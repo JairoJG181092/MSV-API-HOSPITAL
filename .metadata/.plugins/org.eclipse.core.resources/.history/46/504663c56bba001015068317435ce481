@@ -1,0 +1,5 @@
+package com.example.citas.controller;
+
+public class LocalExceptionHandler {
+
+}

@@ -1,0 +1,14 @@
+package com.example.pacientes.services;
+
+import java.util.List;
+
+import com.example.commons.dto.PacienteRequest;
+import com.example.commons.dto.PacienteResponse;
+import com.example.commons.services.CommonService;
+
+public interface PacientesService extends CommonService<PacienteRequest, PacienteResponse>{
+	
+	   
+	
+
+}

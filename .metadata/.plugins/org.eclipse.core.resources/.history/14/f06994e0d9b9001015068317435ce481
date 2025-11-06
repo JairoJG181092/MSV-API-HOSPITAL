@@ -1,0 +1,19 @@
+package com.example.pacientes.services;
+
+import org.springframework.stereotype.Service;
+
+import com.example.commons.dto.MedicoRequest;
+import com.example.commons.dto.MedicoResponse;
+import com.example.commons.dto.PacienteRequest;
+import com.example.commons.dto.PacienteResponse;
+import com.example.commons.services.CommonService;
+
+@Service
+public interface PacientesService extends CommonService<PacienteRequest, PacienteResponse>{
+
+
+
+	//String generarExpediente(PacienteRequest paciente, MedicoRequest medico);
+
+	String generarExpediente(PacienteRequest paciente);
+	}

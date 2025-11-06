@@ -1,8 +1,10 @@
 package com.example.pacientes.entities;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import com.example.commons.enums.EstadoRegistro;
 
-import jakarta.annotation.Generated;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -11,6 +13,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -25,80 +29,81 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "PACIENTES")
-@Getter
-@Setter
+@Table(name = "pacientes")
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 @ToString
 public class Pacientes {
+	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID_PACIENTE")
-	private Long id;
-	
-	@Column(name = "NOMBRE_PACIENTE", nullable = false, length = 50, unique = true)
-	@NotBlank(message = "el nombre es requerido")
-	@Size(min = 1, max = 50, message = "el nombre debe de tener entre 1 y 50")
-	private String nombre;
-	
-	@Column(name = "APELLIDO_PATERNO", nullable = false, length = 50, unique = true)
-	@NotBlank(message = "el nombre es requerido")
-	@Size(min = 1, max = 50, message = "el nombre debe de tener entre 1 y 50")
-	private String apellidoPaterno;
-	
-	@Column(name = "APELLIDO_MATERNO", nullable = false, length = 50, unique = true)
-	@NotBlank(message = "el nombre es requerido")
-	@Size(min = 1, max = 50, message = "el nombre debe de tener entre 1 y 50")
-	private String apellidoMaterno;
-	
-	@Column(name = "EDAD", nullable = false, length = 50, unique = true)
-	@NotNull(message = "el nombre es requerido")
-	@Min(value = 1, message= "el paciente debe de tener al menos un año")
-	@Max(value = 100, message = "el paciente debe de tener al maximo 100 años")
-	private Short edad;
-	
-	@Column(name = "PESO", nullable = false, length = 50, unique = true)
-	@NotNull(message = "el nombre es requerido")
-	@Min(value = 1, message= "el paciente debe de tener al menos un año")
-	@Max(value = 100, message = "el paciente debe de tener al maximo 100 años")
-	private Double peso;
-	
-	@Column(name = "ESTATURA", nullable = false, length = 50, unique = true)
-	@NotNull(message = "el nombre es requerido")
-	@Min(value = 1, message= "el paciente debe de tener al menos un año")
-	@Max(value = 100, message = "el paciente debe de tener al maximo 100 años")
-	private Double estatura;
-	
-	@Column(name = "IMC", nullable = false, length = 50, unique = true)
-	@NotNull(message = "el nombre es requerido")
-	@Min(value = 1, message= "el paciente debe de tener al menos un año")
-	@Max(value = 100, message = "el paciente debe de tener al maximo 100 años")
-	private Double IMC;
-	
-	@Column(name = "EMAIL", nullable = false, length = 50, unique = true)
-	@NotBlank(message = "el nombre es requerido")
-	@Email(message = "el formato del mail tiene que ser mail@mail.com")
-	@Size(min = 1, max = 100, message = "el nombre debe de tener entre 1 y 100")
-	private String email;
-	
-	@Column(name = "TELEFONO")
-	@NotBlank(message = "El teléfono es requerido")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id_paciente")
+    private Long id;
+
+    @Column(name = "nombre", nullable = false, length = 50)
+    @NotBlank(message = "El nombre es requerido")
+	@Size(min = 1, max = 50, message = "El nombre debe tener entre 1 y 50 caracteres")
+    private String nombre;
+
+    @Column(name = "apellido_paterno", nullable = false, length = 50)
+    @NotBlank(message = "El apellido paterno es requerido")
+	@Size(min = 1, max = 50, message = "El apellido paterno debe tener entre 1 y 50 caracteres")
+    private String apellidoPaterno;
+    
+    @Column(name = "apellido_materno", nullable = false, length = 50)
+    @NotBlank(message = "El apellido materno es requerido")
+	@Size(min = 1, max = 50, message = "El apellido materno debe tener entre 1 y 50 caracteres")
+    private String apellidoMaterno;
+    
+    @Column(name = "edad", nullable = false)
+    @NotNull(message = "La edad es requerida")
+	@Min(value = 1, message = "La edad mínima es de 1 año")
+	@Max(value = 100, message = "La edad máxima es de 100 años")
+    private Short edad;
+    
+    @Column(name = "peso", nullable = false)
+    @DecimalMin(value = "0.1", message = "El peso debe ser mayor que 0kg")
+    @DecimalMax(value = "200", message = "El peso máximo permitido es de 200 kg")
+    private Double peso;
+    
+    @Column(name = "estatura", nullable = false)
+    @DecimalMin(value = "1.0", message = "La estatura debe ser mayor que 1 metro")
+    @DecimalMax(value = "2.0", message = "La estatura máxima permitida es de 2 metros")
+    private Double estatura;
+    
+    @Column(name = "imc", nullable = false)
+    @DecimalMin(value = "10.0", message = "El imc no puede ser menos de 10")
+    @DecimalMax(value = "50.0", message = "El imc no puede ser más de 50")
+    private Double imc;
+
+    @Column(name = "email", nullable = false, length = 100)
+    @NotBlank(message = "El email es requerido")
+    @Size(min = 1, max = 100, message = "El email debe tener entre 1 y 100 caracteres")
+	@Email(message = "El email debe tener el formato correcto (correo@dominio)")
+    private String email;
+
+    @Column(name = "telefono", nullable = false, length = 10)
+    @NotBlank(message = "El teléfono es requerido")
 	@Size(min = 10, max = 10, message = "El teléfono debe tener exactamente 10 dígitos")
 	@Pattern(regexp = "^[0-9]{10}$", message = "El teléfono debe contener solo 10 dígitos numéricos")
-	private String telefono;
-	
-	@Column(name = "DIRECCION", nullable = false, length = 50, unique = true)
-	@NotBlank(message = "el nombre es requerido")
-	@Size(min = 1, max = 150, message = "el nombre debe de tener entre 1 y 150")
-	private String direccion;
-	
-	@Column(name = "NUMERO_REGISTRO", nullable = false, length = 50, unique = true)
-	@NotBlank(message = "el nombre es requerido")
-	@Size(min = 1, max = 50, message = "el nombre debe de tener entre 1 y 50")
-	private String numeroExpediente;
-	
-	@Column(name = "ESTADO_REGISTRO")
-	@Enumerated(EnumType.STRING)
-	private EstadoRegistro estado;
+    private String telefono;
+
+    @Column(name = "direccion", nullable = false, length = 150)
+    @NotBlank(message = "La dirección es requerida")
+	@Size(min = 1, max = 150, message = "La dirección debe tener entre 1 y 150 caracteres")
+    private String direccion;
+    
+    @Column(name = "NUM_EXPEDIENTE", nullable = false, length = 20)
+    @NotBlank(message = "El expediente es requerido")
+	@Size(min = 20, max = 20, message = "El expediente debe tener exactamente 20 caracteres")
+    private String numExpediente;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "ESTADO_REGISTRO", nullable = false)
+    @NotNull(message = "El estado del registro es requerido")
+    //@JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    private EstadoRegistro estado;
+
 }

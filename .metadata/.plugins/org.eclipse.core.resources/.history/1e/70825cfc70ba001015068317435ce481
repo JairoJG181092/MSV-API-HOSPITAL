@@ -1,0 +1,75 @@
+package com.example.pacientes.entities;
+
+import org.hibernate.annotations.JdbcType;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
+import com.example.commons.enums.EstadoRegistro;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.*;
+import lombok.*;
+
+@Entity
+@Table(name = "PACIENTES")
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class Pacientes {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ID_PACIENTE")
+    private Long id;
+
+    @Column(name = "NOMBRE_PACIENTE", nullable = false, length = 50)
+    @NotBlank(message = "El nombre es requerido")
+    @Size(min = 1, max = 50, message = "El nombre debe tener entre 1 y 50 caracteres")
+    private String nombre;
+
+    @Column(name = "APELLIDO_PATERNO", nullable = false, length = 50)
+    @NotBlank(message = "El apellido paterno es requerido")
+    private String apellidoPaterno;
+
+    @Column(name = "APELLIDO_MATERNO", nullable = false, length = 50)
+    @NotBlank(message = "El apellido materno es requerido")
+    private String apellidoMaterno;
+
+    @NotNull(message = "La edad es requerida")
+    @Min(value = 1, message = "El paciente debe tener al menos 1 año")
+    @Max(value = 120, message = "La edad máxima permitida es 120")
+    private Short edad;
+
+    @NotNull(message = "El peso es requerido")
+    @DecimalMin(value = "1.0", message = "El peso debe ser mayor a 1kg")
+    @DecimalMax(value = "300.0", message = "El peso no puede ser mayor a 300kg")
+    private Double peso;
+
+    @NotNull(message = "La estatura es requerida")
+    @DecimalMin(value = "0.3", message = "La estatura debe ser mayor a 0.3m")
+    @DecimalMax(value = "2.5", message = "La estatura no puede ser mayor a 2.5m")
+    private Double estatura;
+
+    @Column(name = "IMC")
+    private Double imc;
+
+    @NotBlank(message = "El correo electrónico es requerido")
+    @Email(message = "El formato del correo debe ser válido (mail@mail.com)")
+    @Size(max = 100)
+    private String email;
+
+    @NotBlank(message = "El teléfono es requerido")
+    @Pattern(regexp = "^[0-9]{10}$", message = "El teléfono debe contener exactamente 10 dígitos")
+    private String telefono;
+
+    @NotBlank(message = "La dirección es requerida")
+    @Size(max = 150)
+    private String direccion;
+
+    @NotBlank(message = "El número de expediente es requerido")
+    private String numeroExpediente;
+
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.NAMED_ENUM)
+    private EstadoRegistro estadoPaciente;
+}

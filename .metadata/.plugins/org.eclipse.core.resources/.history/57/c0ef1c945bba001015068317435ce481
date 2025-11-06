@@ -1,0 +1,30 @@
+package com.example.citas.mappers;
+
+import com.example.citas.dto.CitaRequest;
+import com.example.citas.dto.CitaResponse;
+import com.example.citas.entities.Citas;
+import com.example.commons.mapper.CommonMapper;
+import com.example.commons.services.CommonService;
+
+public class CitaMapper implements CommonMapper<CitaRequest, CitaResponse, Citas>{
+
+	@Override
+	public CitaResponse entityToResponse(Citas entity) {
+		if(entity ==null) return null;
+		return new CitaResponse(
+				entity.getId(),
+				null,
+				null,
+				entity.getFechaCita(),
+				entity.getSintomas(),
+				entity.getEstadoCia().getDescripcion()
+				);
+	}
+
+	@Override
+	public Citas requestToEntity(CitaRequest request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+}

@@ -1,0 +1,10 @@
+package com.example.citas.mappers;
+
+import com.example.citas.dto.CitaRequest;
+import com.example.citas.dto.CitaResponse;
+import com.example.citas.entities.Citas;
+import com.example.commons.services.CommonService;
+
+public class CitaMapper implements CommonService<CitaRequest, CitaResponse, Citas>{
+	public CitaResponse
+}

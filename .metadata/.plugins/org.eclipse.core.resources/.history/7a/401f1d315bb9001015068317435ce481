@@ -1,0 +1,83 @@
+package com.example.pacientes.services;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.example.commons.dto.PacienteRequest;
+import com.example.commons.dto.PacienteResponse;
+import com.example.commons.enums.EstadoRegistro;
+import com.example.pacientes.entities.Pacientes;
+import com.example.pacientes.mapper.PacienteMapper;
+import com.example.pacientes.repositories.PacientesRepository;
+
+import jakarta.persistence.EntityNotFoundException;
+
+@Service
+public class PacientesServiceImpl implements PacientesService{
+
+
+   
+    private PacientesRepository pacienteRepository;
+
+   
+    private PacienteMapper pacienteMapper;
+
+    
+    private void validarUnicidad(Pacientes paciente) {
+        
+    }
+
+    private Double calcularImc(Double peso, Double estatura) {
+        if (estatura == null || estatura == 0.0 || peso == null) {
+            return 0.0;
+        }
+        return Math.round((peso / (estatura * estatura)) * 100.0) / 100.0;
+    }
+
+    @Override
+    public PacienteResponse registrar(PacienteRequest requestDTO) {
+        Pacientes paciente = pacienteMapper.requestToEntity(requestDTO);
+        validarUnicidad(paciente);
+        Double imc = calcularImc(requestDTO.peso(), requestDTO.estatura());
+        paciente.setImc(imc);
+        Pacientes savedPaciente = pacienteRepository.save(paciente);
+        return pacienteMapper.entityToResponse(savedPaciente);
+    }
+
+    @Override
+    public PacienteResponse obtenerPorId(Long id) {
+        Pacientes paciente = pacienteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + id));
+        return pacienteMapper.entityToResponse(paciente);
+    }
+
+    @Override
+    public List<PacienteResponse> listar() {
+        return pacienteRepository.findAll().stream()
+                .map(pacienteMapper::entityToResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public PacienteResponse actualizar(PacienteRequest requestDTO, Long id) {
+        Pacientes pacienteExistente = pacienteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + id));
+        Pacientes pacienteActualizado = pacienteMapper.requestToEntity(requestDTO);
+        pacienteActualizado.setId(id);
+        Double imc = calcularImc(requestDTO.peso(), requestDTO.estatura());
+        pacienteActualizado.setImc(imc);
+        Pacientes savedPaciente = pacienteRepository.save(pacienteActualizado);
+        return pacienteMapper.entityToResponse(savedPaciente);
+    }
+
+    @Override
+    public void eliminar(Long id) {
+        Pacientes paciente = pacienteRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado con ID: " + id));
+        paciente.setEstadoPaciente(EstadoRegistro.ELIMINADO);
+        pacienteRepository.save(paciente);
+    }
+}

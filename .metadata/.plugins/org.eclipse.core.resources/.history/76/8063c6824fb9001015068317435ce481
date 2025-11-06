@@ -1,0 +1,18 @@
+package com.example.pacientes.services;
+
+import java.util.List;
+
+import com.example.commons.dto.PacienteRequest;
+import com.example.commons.dto.PacienteResponse;
+import com.example.commons.services.CommonService;
+
+public interface PacientesService extends CommonService<PacienteRequest, PacienteResponse>{
+	
+	    PacienteResponse crearPaciente(PacienteRequest requestDTO);
+	    PacienteResponse obtenerPacientePorId(Long id);
+	    List<PacienteResponse> obtenerTodosLosPacientes();
+	    PacienteResponse actualizarPaciente(Long id, PacienteRequest requestDTO);
+	    void eliminarPaciente(Long id); // Eliminación lógica
+	
+
+}

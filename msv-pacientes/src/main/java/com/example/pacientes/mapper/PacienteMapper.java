@@ -1,39 +1,49 @@
 package com.example.pacientes.mapper;
 
-import org.springframework.stereotype.Component;
-
 import com.example.commons.dto.PacienteRequest;
 import com.example.commons.dto.PacienteResponse;
-import com.example.commons.mapper.CommonMapper;
 import com.example.pacientes.entities.Pacientes;
-import com.example.commons.enums.EstadoRegistro;
+import org.springframework.stereotype.Component;
 
 @Component
-public class PacienteMapper implements CommonMapper<PacienteRequest, PacienteResponse, Pacientes>{
+public class PacienteMapper {
 
-	@Override
-	public PacienteResponse entityToResponse(Pacientes entity) {
-		if(entity == null) return null;
-		return new PacienteResponse(
-				entity.getId(),
-				String.join("", entity.getNombre(),
-						entity.getApellidoPaterno(),
-						entity.getApellidoMaterno()),
-				entity.getEdad(),
-				entity.getPeso(),
-				entity.getEstatura(),
-				entity.getIMC(),
-				entity.getEmail(),
-				entity.getTelefono(),
-				entity.getDireccion(),
-				entity.getNumeroExpediente(),
-				entity.getEstadoPaciente().getDescripcion());
-	}
+    public Pacientes toEntity(PacienteRequest dto) {
+        Pacientes entity = new Pacientes();
+        entity.setNombre(dto.nombre());
+        entity.setApellidoPaterno(dto.apellidoPaterno());
+        entity.setApellidoMaterno(dto.apellidoMaterno());
+        entity.setEdad(dto.edad());
+        entity.setPeso(dto.peso());
+        entity.setEstatura(dto.estatura());
+        entity.setImc(calcularIMC(dto.peso(), dto.estatura()));
+        entity.setEmail(dto.email());
+        entity.setTelefono(dto.telefono());
+        entity.setDireccion(dto.direccion());
+        entity.setNumExpediente(dto.numeroExpediente());
+        entity.setEstado(dto.estadoPaciente());
+        return entity;
+    }
 
-	@Override
-	public Pacientes requestToEntity(PacienteRequest request) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public PacienteResponse toResponse(Pacientes entity) {
+        return new PacienteResponse(
+                entity.getId(),
+                entity.getNombre() + " " + entity.getApellidoPaterno() + " " + entity.getApellidoMaterno(),
+                entity.getEdad(),
+                entity.getPeso(),
+                entity.getEstatura(),
+                entity.getImc(),
+                entity.getEmail(),
+                entity.getTelefono(),
+                entity.getDireccion(),
+                entity.getNumExpediente(),
+                entity.getEstado()
+        );
+    }
 
+    private Double calcularIMC(Double peso, Double estatura) {
+        if (peso != null && estatura != null && estatura > 0)
+            return Math.round((peso / (estatura * estatura)) * 100.0) / 100.0;
+        return 0.0;
+    }
 }

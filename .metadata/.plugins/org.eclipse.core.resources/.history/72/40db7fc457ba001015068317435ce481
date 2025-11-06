@@ -1,0 +1,10 @@
+package com.christian.citas.dto;
+
+public record DatosPaciente(
+		String nombre,
+		String numExpediente,
+		String edad,
+		String peso,
+		Double imc,
+		String telefono
+) {}

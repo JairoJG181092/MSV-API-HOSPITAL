@@ -1,0 +1,70 @@
+package com.example.pacientes.services;
+
+import java.util.List;
+
+import com.example.commons.dto.PacienteRequest;
+import com.example.commons.dto.PacienteResponse;
+
+public class PacientesServiceImpl implements PacientesService{
+
+	@Override
+	public List<PacienteResponse> listar() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PacienteResponse obtenerPorId(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PacienteResponse registrar(PacienteRequest request) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PacienteResponse actualizar(PacienteRequest request, Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void eliminar(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public PacienteResponse crearPaciente(PacienteRequest requestDTO) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PacienteResponse obtenerPacientePorId(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<PacienteResponse> obtenerTodosLosPacientes() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PacienteResponse actualizarPaciente(Long id, PacienteRequest requestDTO) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void eliminarPaciente(Long id) {
+		// TODO Auto-generated method stub
+		
+	}
+
+}

@@ -1,0 +1,113 @@
+package com.example.pacientes.services;
+
+import com.example.commons.clients.MedicoClient;
+import com.example.commons.dto.MedicoRequest;
+import com.example.commons.dto.MedicoResponse;
+import com.example.commons.dto.PacienteRequest;
+import com.example.commons.dto.PacienteResponse;
+import com.example.pacientes.entities.Pacientes;
+import com.example.commons.enums.EstadoRegistro;
+import com.example.medicos.services.MedicoService;
+import com.example.pacientes.mapper.PacienteMapper;
+import com.example.pacientes.repositories.PacientesRepository;
+import com.example.pacientes.services.PacientesService;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class PacientesServiceImpl implements PacientesService {
+
+    private final PacientesRepository repository;
+    private final PacienteMapper mapper;
+    private final MedicoClient medicoClient;
+    
+
+    @Override
+    public PacienteResponse registrar(PacienteRequest request) {
+        if (repository.existsByEmail(request.email())) {
+            throw new IllegalArgumentException("El correo ya está registrado.");
+        }
+        Pacientes entity = mapper.toEntity(request);
+        entity.setEstado(EstadoRegistro.ACTIVO);
+        return mapper.toResponse(repository.save(entity));
+    }
+
+    @Override
+    public PacienteResponse actualizar( PacienteRequest request, Long id) {
+        
+    	String expediente = generarExpediente(request);
+    	Pacientes entity = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado"));
+        entity.setNombre(request.nombre());
+        entity.setApellidoPaterno(request.apellidoPaterno());
+        entity.setApellidoMaterno(request.apellidoMaterno());
+        entity.setEdad(request.edad());
+        entity.setPeso(request.peso());
+        entity.setEstatura(request.estatura());
+        entity.setImc(entity.getPeso() / (entity.getEstatura() * entity.getEstatura()));
+        entity.setEmail(request.email());
+        entity.setTelefono(request.telefono());
+        entity.setDireccion(request.direccion());
+        entity.setNumeroExpediente(expediente);
+        entity.setEstadoPaciente(request.estadoPaciente());
+        return mapper.toResponse(repository.save(entity));
+    }
+
+    @Override
+    public List<PacienteResponse> listar() {
+        return repository.findAll()
+                .stream()
+                .map(mapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public PacienteResponse obtenerPorId(Long id) {
+    	log.info("datos de medico desde paciente" + medicoClient.obtenerMedicoPorId(id));
+        Pacientes entity = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado"));
+        return mapper.toResponse(entity);
+    }
+
+    @Override
+    public void eliminar(Long id) {
+        Pacientes entity = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Paciente no encontrado"));
+        entity.setEstadoPaciente(EstadoRegistro.ELIMINADO);
+        repository.save(entity);
+    }
+    
+    @Override
+    public String generarExpediente(PacienteRequest paciente) {
+        // Iniciales del paciente
+        String inicialNombrePaciente = (paciente.nombre() != null && !paciente.nombre().isBlank())
+                ? paciente.nombre().substring(0, 1).toUpperCase()
+                : "X";
+
+        String inicialApellidoPaciente = (paciente.apellidoPaterno() != null && !paciente.apellidoPaterno().isBlank())
+                ? paciente.apellidoPaterno().substring(0, 1).toUpperCase()
+                : "X";
+
+        // Para la primera vez que se registra, se usa "XX" en lugar de iniciales del doctor
+        String inicialesMedico = "XX";
+
+        // Fecha con formato año(2) + mes(2) + día(2) + hora(2)
+        String fecha = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyMMddHH"));
+
+        // Concatenar todo
+        String expediente = inicialNombrePaciente + inicialApellidoPaciente + inicialesMedico + fecha;
+
+        return expediente;
+    }
+
+}

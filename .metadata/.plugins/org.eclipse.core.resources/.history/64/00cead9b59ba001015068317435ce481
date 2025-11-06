@@ -1,0 +1,5 @@
+package com.example.citas.repositories;
+
+public interface CitaRepository {
+
+}

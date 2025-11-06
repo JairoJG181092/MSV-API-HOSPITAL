@@ -1,0 +1,9 @@
+package com.example.pacientes.repositories;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import com.example.pacientes.entities.Pacientes;
+
+public interface PacientesRepository extends JpaRepository<Pacientes, Long>{
+
+}

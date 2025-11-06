@@ -1,0 +1,62 @@
+package com.example.citas.mappers;
+
+import org.springframework.stereotype.Component;
+
+import com.example.citas.dto.CitaRequest;
+import com.example.citas.dto.CitaResponse;
+import com.example.citas.entities.Citas;
+import com.example.citas.enums.EstadoCita;
+import com.example.commons.dto.DatosMedico;
+import com.example.commons.dto.DatosPaciente;
+import com.example.commons.mapper.CommonMapper;
+import com.example.commons.services.CommonService;
+
+@Component
+public class CitaMapper implements CommonMapper<CitaRequest, CitaResponse, Citas>{
+
+	@Override
+	public CitaResponse entityToResponse(Citas entity) {
+		if(entity ==null) return null;
+		return new CitaResponse(
+				entity.getId(),
+				null,
+				null,
+				entity.getFechaCita(),
+				entity.getSintomas(),
+				entity.getEstadoCita().getDescripcion()
+				);
+	}
+	
+	public CitaResponse entityToResponse(Citas entity, DatosPaciente paciente, DatosMedico medico) {
+		if(entity ==null) return null;
+		return new CitaResponse(
+				entity.getId(),
+				paciente,
+				medico,
+				entity.getFechaCita(),
+				entity.getSintomas(),
+				entity.getEstadoCita().getDescripcion()
+				);
+	}
+
+
+	@Override
+	public Citas requestToEntity(CitaRequest request) {
+		if(request == null) return null;
+		Citas cita = new Citas();
+		cita.setIdPaciente(request.idPaciente());
+		cita.setIdMedico(request.idMedico());
+		cita.setFechaCita(request.fechaCita());
+		cita.setSintomas(request.sintomas());
+		cita.setEstadoCita(null);
+		return cita;
+	}
+	
+	public Citas requestToEntity(CitaRequest request, EstadoCita estadoCita) {
+		if(request == null) return null;
+		Citas cita = requestToEntity(request);
+		cita.setEstadoCita(estadoCita);
+		return cita;
+	}
+	
+}

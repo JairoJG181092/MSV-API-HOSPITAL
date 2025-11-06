@@ -1,0 +1,37 @@
+package com.example.citas.controller;
+
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.citas.dto.CitaRequest;
+import com.example.citas.dto.CitaResponse;
+import com.example.citas.enums.EstadoCita;
+import com.example.citas.services.CitaService;
+import com.example.commons.controllers.CommonController;
+
+@RestController
+public class CitaController extends CommonController<CitaRequest, CitaResponse, CitaService>{
+
+	public CitaController(CitaService service) {
+		super(service);
+		// TODO Auto-generated constructor stub
+	}
+	
+	@GetMapping("/validar/paciente/{idPaciente}")
+    public boolean tieneCitasActivasPorPaciente(@PathVariable Long idPaciente) {
+        return service.existsByPacienteIdAndEstadoIn(
+            idPaciente, List.of(EstadoCita.CONFIRMADA, EstadoCita.EN_CURSO)
+        );
+    }
+
+    @GetMapping("/validar/medico/{idMedico}")
+    public boolean tieneCitasActivasPorMedico(@PathVariable Long idMedico) {
+        return citaRepository.existsByMedicoIdAndEstadoIn(
+            idMedico, List.of(EstadoCita.CONFIRMADA, EstadoCita.EN_CURSO)
+        );
+    }
+
+}
